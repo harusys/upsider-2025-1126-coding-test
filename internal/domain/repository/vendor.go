@@ -22,6 +22,12 @@ type VendorBankAccountRepository interface {
 	GetByID(ctx context.Context, id int64) (*entity.VendorBankAccount, error)
 	GetByIDAndVendorID(ctx context.Context, id, vendorID int64) (*entity.VendorBankAccount, error)
 	GetByVendorID(ctx context.Context, vendorID int64) ([]*entity.VendorBankAccount, error)
-	Create(ctx context.Context, account *entity.VendorBankAccount) (*entity.VendorBankAccount, error)
-	Update(ctx context.Context, account *entity.VendorBankAccount) (*entity.VendorBankAccount, error)
+	Create(
+		ctx context.Context,
+		account *entity.VendorBankAccount,
+	) (*entity.VendorBankAccount, error)
+	Update(
+		ctx context.Context,
+		account *entity.VendorBankAccount,
+	) (*entity.VendorBankAccount, error)
 }

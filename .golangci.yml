@@ -56,6 +56,12 @@ linters:
         linters:
           - forbidigo
           - ireturn
+      - path: internal/infrastructure/persistence/
+        linters:
+          - ireturn
+      - path: internal/infrastructure/security/
+        linters:
+          - forbidigo
 formatters:
   enable:
     - gci

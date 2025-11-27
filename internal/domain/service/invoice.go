@@ -1,21 +1,30 @@
 package service
 
 import (
+	"github.com/harusys/super-shiharai-kun/internal/domain"
 	"github.com/shopspring/decimal"
 )
 
-// DefaultFeeRate is the default fee rate (4%).
-var DefaultFeeRate = decimal.NewFromFloat(0.04)
-
-// DefaultTaxRate is the default tax rate (10%).
-var DefaultTaxRate = decimal.NewFromFloat(0.10)
-
 // InvoiceCalculator provides invoice amount calculation logic.
-type InvoiceCalculator struct{}
+type InvoiceCalculator struct {
+	feeRate decimal.Decimal
+	taxRate decimal.Decimal
+}
 
-// NewInvoiceCalculator creates a new InvoiceCalculator.
+// NewInvoiceCalculator creates a new InvoiceCalculator with default rates.
 func NewInvoiceCalculator() *InvoiceCalculator {
-	return &InvoiceCalculator{}
+	return &InvoiceCalculator{
+		feeRate: decimal.RequireFromString(domain.DefaultFeeRateStr),
+		taxRate: decimal.RequireFromString(domain.DefaultTaxRateStr),
+	}
+}
+
+// NewInvoiceCalculatorWithRates creates a new InvoiceCalculator with custom rates.
+func NewInvoiceCalculatorWithRates(feeRate, taxRate decimal.Decimal) *InvoiceCalculator {
+	return &InvoiceCalculator{
+		feeRate: feeRate,
+		taxRate: taxRate,
+	}
 }
 
 // CalculationResult holds the result of invoice calculation.
@@ -40,11 +49,14 @@ type CalculationResult struct {
 //	tax = 400 * 0.10 = 40
 //	total = 10000 + 400 + 40 = 10440
 func (c *InvoiceCalculator) Calculate(paymentAmount int64) *CalculationResult {
-	return c.CalculateWithRates(paymentAmount, DefaultFeeRate, DefaultTaxRate)
+	return c.CalculateWithRates(paymentAmount, c.feeRate, c.taxRate)
 }
 
 // CalculateWithRates calculates the invoice amounts with custom rates.
-func (c *InvoiceCalculator) CalculateWithRates(paymentAmount int64, feeRate, taxRate decimal.Decimal) *CalculationResult {
+func (c *InvoiceCalculator) CalculateWithRates(
+	paymentAmount int64,
+	feeRate, taxRate decimal.Decimal,
+) *CalculationResult {
 	payment := decimal.NewFromInt(paymentAmount)
 
 	// fee = payment * feeRate (truncate to integer)

@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "go.alternateTools": {
+    "customFormatter": "golangci-lint-v2"
+  },
+  "go.buildTags": "e2e",
+  "go.formatTool": "custom",
+  "go.formatFlags": ["fmt", "--stdin"],
+  "go.lintTool": "golangci-lint-v2",
+  "go.lintFlags": ["--path-mode=abs"],
+  "go.testFlags": ["-p=32", "-timeout=30s"]
+}

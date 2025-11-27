@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -60,10 +61,10 @@ func (h *Handler) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, &TokenResponse{
-		AccessToken:           tokenPair.AccessToken,
-		AccessTokenExpiresAt:  tokenPair.AccessTokenExpiresAt,
-		RefreshToken:          tokenPair.RefreshToken,
-		RefreshTokenExpiresAt: tokenPair.RefreshTokenExpiresAt,
+		AccessToken:  tokenPair.AccessToken,
+		TokenType:    "Bearer",
+		ExpiresIn:    int64(time.Until(tokenPair.AccessTokenExpiresAt).Seconds()),
+		RefreshToken: tokenPair.RefreshToken,
 	})
 }
 
@@ -102,10 +103,10 @@ func (h *Handler) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &TokenResponse{
-		AccessToken:           tokenPair.AccessToken,
-		AccessTokenExpiresAt:  tokenPair.AccessTokenExpiresAt,
-		RefreshToken:          tokenPair.RefreshToken,
-		RefreshTokenExpiresAt: tokenPair.RefreshTokenExpiresAt,
+		AccessToken:  tokenPair.AccessToken,
+		TokenType:    "Bearer",
+		ExpiresIn:    int64(time.Until(tokenPair.AccessTokenExpiresAt).Seconds()),
+		RefreshToken: tokenPair.RefreshToken,
 	})
 }
 
@@ -133,10 +134,10 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, &TokenResponse{
-		AccessToken:           tokenPair.AccessToken,
-		AccessTokenExpiresAt:  tokenPair.AccessTokenExpiresAt,
-		RefreshToken:          tokenPair.RefreshToken,
-		RefreshTokenExpiresAt: tokenPair.RefreshTokenExpiresAt,
+		AccessToken:  tokenPair.AccessToken,
+		TokenType:    "Bearer",
+		ExpiresIn:    int64(time.Until(tokenPair.AccessTokenExpiresAt).Seconds()),
+		RefreshToken: tokenPair.RefreshToken,
 	})
 }
 

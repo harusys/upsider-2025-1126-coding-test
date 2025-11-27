@@ -1,13 +1,12 @@
 package auth
 
-import "time"
-
 // TokenResponse is the response body containing authentication tokens.
+// Follows OAuth 2.0 (RFC 6749) standard format.
 type TokenResponse struct {
-	AccessToken           string    `json:"access_token"`
-	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
-	RefreshToken          string    `json:"refresh_token"`
-	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int64  `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // ErrorResponse is the standard error response body.

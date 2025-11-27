@@ -28,7 +28,20 @@ func NewHandler(usecase invoice.Usecase, validator *validator.Validate) *Handler
 }
 
 // Create handles invoice creation.
-// POST /api/v1/invoices
+//
+//	@Summary		請求書作成
+//	@Description	新しい請求書データを作成します。手数料・消費税は自動計算されます。
+//	@Tags			invoices
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		CreateRequest	true	"請求書作成リクエスト"
+//	@Success		201		{object}	Response
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		401		{object}	ErrorResponse
+//	@Failure		404		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
+//	@Security		BearerAuth
+//	@Router			/invoices [post]
 func (h *Handler) Create(c *gin.Context) {
 	companyID := middleware.GetCompanyID(c)
 
@@ -85,7 +98,20 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 // List handles listing invoices.
-// GET /api/v1/invoices
+//
+//	@Summary		請求書一覧取得
+//	@Description	指定期間内に支払いが発生する請求書データの一覧を取得します
+//	@Tags			invoices
+//	@Accept			json
+//	@Produce		json
+//	@Param			start_date	query		string	false	"開始日 (YYYY-MM-DD)"
+//	@Param			end_date	query		string	false	"終了日 (YYYY-MM-DD)"
+//	@Success		200			{array}		Response
+//	@Failure		400			{object}	ErrorResponse
+//	@Failure		401			{object}	ErrorResponse
+//	@Failure		500			{object}	ErrorResponse
+//	@Security		BearerAuth
+//	@Router			/invoices [get]
 func (h *Handler) List(c *gin.Context) {
 	companyID := middleware.GetCompanyID(c)
 
@@ -126,7 +152,20 @@ func (h *Handler) List(c *gin.Context) {
 }
 
 // GetByID handles getting an invoice by ID.
-// GET /api/v1/invoices/:id
+//
+//	@Summary		請求書詳細取得
+//	@Description	指定IDの請求書データを取得します
+//	@Tags			invoices
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"請求書ID"
+//	@Success		200	{object}	Response
+//	@Failure		400	{object}	ErrorResponse
+//	@Failure		401	{object}	ErrorResponse
+//	@Failure		404	{object}	ErrorResponse
+//	@Failure		500	{object}	ErrorResponse
+//	@Security		BearerAuth
+//	@Router			/invoices/{id} [get]
 func (h *Handler) GetByID(c *gin.Context) {
 	companyID := middleware.GetCompanyID(c)
 

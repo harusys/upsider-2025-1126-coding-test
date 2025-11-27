@@ -1,0 +1,351 @@
+basePath: /api
+definitions:
+  internal_controller_auth.ErrorResponse:
+    properties:
+      details:
+        additionalProperties:
+          type: string
+        type: object
+      error:
+        type: string
+    type: object
+  internal_controller_auth.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  internal_controller_auth.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  internal_controller_auth.RegisterRequest:
+    properties:
+      company_id:
+        type: integer
+      email:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      password:
+        maxLength: 72
+        minLength: 8
+        type: string
+    required:
+    - company_id
+    - email
+    - name
+    - password
+    type: object
+  internal_controller_auth.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      token_type:
+        type: string
+    type: object
+  internal_controller_invoice.CreateRequest:
+    properties:
+      due_date:
+        type: string
+      issue_date:
+        type: string
+      payment_amount:
+        type: integer
+      vendor_bank_account_id:
+        type: integer
+      vendor_id:
+        type: integer
+    required:
+    - due_date
+    - issue_date
+    - payment_amount
+    - vendor_bank_account_id
+    - vendor_id
+    type: object
+  internal_controller_invoice.ErrorResponse:
+    properties:
+      details:
+        additionalProperties:
+          type: string
+        type: object
+      error:
+        type: string
+    type: object
+  internal_controller_invoice.Response:
+    properties:
+      company_id:
+        type: integer
+      created_at:
+        type: string
+      due_date:
+        type: string
+      fee:
+        type: integer
+      fee_rate:
+        type: string
+      id:
+        type: integer
+      issue_date:
+        type: string
+      payment_amount:
+        type: integer
+      status:
+        type: string
+      tax:
+        type: integer
+      tax_rate:
+        type: string
+      total_amount:
+        type: integer
+      updated_at:
+        type: string
+      vendor_bank_account_id:
+        type: integer
+      vendor_id:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: 請求書管理・支払い処理を行うREST APIサービス
+  title: スーパー支払い君.com API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: メールアドレスとパスワードで認証し、JWTトークンを発行します
+      parameters:
+      - description: ログインリクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controller_auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+      summary: ログイン
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: リフレッシュトークンを使用して新しいアクセストークンを取得します
+      parameters:
+      - description: トークン更新リクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_auth.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controller_auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+      summary: トークン更新
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: 新規ユーザーを登録し、JWTトークンを発行します
+      parameters:
+      - description: 登録リクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_controller_auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller_auth.ErrorResponse'
+      summary: ユーザー登録
+      tags:
+      - auth
+  /invoices:
+    get:
+      consumes:
+      - application/json
+      description: 指定期間内に支払いが発生する請求書データの一覧を取得します
+      parameters:
+      - description: 開始日 (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: 終了日 (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_controller_invoice.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 請求書一覧取得
+      tags:
+      - invoices
+    post:
+      consumes:
+      - application/json
+      description: 新しい請求書データを作成します。手数料・消費税は自動計算されます。
+      parameters:
+      - description: 請求書作成リクエスト
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controller_invoice.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 請求書作成
+      tags:
+      - invoices
+  /invoices/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 指定IDの請求書データを取得します
+      parameters:
+      - description: 請求書ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_controller_invoice.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 請求書詳細取得
+      tags:
+      - invoices
+securityDefinitions:
+  BearerAuth:
+    description: Bearer token authentication
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

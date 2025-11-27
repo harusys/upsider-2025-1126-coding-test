@@ -25,7 +25,18 @@ func NewHandler(usecase auth.Usecase, validator *validator.Validate) *Handler {
 }
 
 // Register handles user registration.
-// POST /api/v1/auth/register
+//
+//	@Summary		ユーザー登録
+//	@Description	新規ユーザーを登録し、JWTトークンを発行します
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		RegisterRequest	true	"登録リクエスト"
+//	@Success		201		{object}	TokenResponse
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		409		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
+//	@Router			/auth/register [post]
 func (h *Handler) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -69,7 +80,18 @@ func (h *Handler) Register(c *gin.Context) {
 }
 
 // Login handles user login.
-// POST /api/v1/auth/login
+//
+//	@Summary		ログイン
+//	@Description	メールアドレスとパスワードで認証し、JWTトークンを発行します
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		LoginRequest	true	"ログインリクエスト"
+//	@Success		200		{object}	TokenResponse
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		401		{object}	ErrorResponse
+//	@Failure		500		{object}	ErrorResponse
+//	@Router			/auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -111,7 +133,17 @@ func (h *Handler) Login(c *gin.Context) {
 }
 
 // RefreshToken handles token refresh.
-// POST /api/v1/auth/refresh
+//
+//	@Summary		トークン更新
+//	@Description	リフレッシュトークンを使用して新しいアクセストークンを取得します
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		RefreshTokenRequest	true	"トークン更新リクエスト"
+//	@Success		200		{object}	TokenResponse
+//	@Failure		400		{object}	ErrorResponse
+//	@Failure		401		{object}	ErrorResponse
+//	@Router			/auth/refresh [post]
 func (h *Handler) RefreshToken(c *gin.Context) {
 	var req RefreshTokenRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

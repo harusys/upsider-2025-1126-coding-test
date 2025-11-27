@@ -114,7 +114,7 @@ func (s *APITestSuite) TestAuthFlow() {
 		"password":   "password123",
 	}
 	body, _ := json.Marshal(registerBody)
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
@@ -136,7 +136,7 @@ func (s *APITestSuite) TestAuthFlow() {
 		"password": "password123",
 	}
 	body, _ = json.Marshal(loginBody)
-	req = httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewReader(body))
+	req = httptest.NewRequest(http.MethodPost, "/api/auth/login", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	w = httptest.NewRecorder()
@@ -156,7 +156,7 @@ func (s *APITestSuite) TestAuthFlow() {
 		"refresh_token": loginResp["refresh_token"],
 	}
 	body, _ = json.Marshal(refreshBody)
-	req = httptest.NewRequest(http.MethodPost, "/api/v1/auth/refresh", bytes.NewReader(body))
+	req = httptest.NewRequest(http.MethodPost, "/api/auth/refresh", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	w = httptest.NewRecorder()
@@ -167,7 +167,7 @@ func (s *APITestSuite) TestAuthFlow() {
 }
 
 func (s *APITestSuite) TestProtectedRouteWithoutToken() {
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/invoices", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/invoices", nil)
 	w := httptest.NewRecorder()
 
 	s.router.ServeHTTP(w, req)
@@ -176,7 +176,7 @@ func (s *APITestSuite) TestProtectedRouteWithoutToken() {
 }
 
 func (s *APITestSuite) TestProtectedRouteWithInvalidToken() {
-	req := httptest.NewRequest(http.MethodGet, "/api/v1/invoices", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/invoices", nil)
 	req.Header.Set("Authorization", "Bearer invalid-token")
 
 	w := httptest.NewRecorder()
@@ -195,7 +195,7 @@ func (s *APITestSuite) TestInvoiceFlow() {
 		"password":   "password123",
 	}
 	body, _ := json.Marshal(registerBody)
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
@@ -237,7 +237,7 @@ func (s *APITestSuite) TestInvoiceFlow() {
 		"due_date":               "2024-02-15",
 	}
 	body, _ = json.Marshal(invoiceBody)
-	req = httptest.NewRequest(http.MethodPost, "/api/v1/invoices", bytes.NewReader(body))
+	req = httptest.NewRequest(http.MethodPost, "/api/invoices", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
@@ -260,7 +260,7 @@ func (s *APITestSuite) TestInvoiceFlow() {
 	invoiceID := int64(invoiceResp["id"].(float64))
 
 	// 4. List invoices
-	req = httptest.NewRequest(http.MethodGet, "/api/v1/invoices", nil)
+	req = httptest.NewRequest(http.MethodGet, "/api/invoices", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	w = httptest.NewRecorder()
@@ -278,7 +278,7 @@ func (s *APITestSuite) TestInvoiceFlow() {
 	// 5. Get invoice by ID
 	req = httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/api/v1/invoices/%d", invoiceID),
+		fmt.Sprintf("/api/invoices/%d", invoiceID),
 		nil,
 	)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
@@ -305,7 +305,7 @@ func (s *APITestSuite) TestInvoiceListWithDateFilter() {
 		"password":   "password123",
 	}
 	body, _ := json.Marshal(registerBody)
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", bytes.NewReader(body))
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
@@ -321,7 +321,7 @@ func (s *APITestSuite) TestInvoiceListWithDateFilter() {
 	// 2. List with date filter (should return empty)
 	req = httptest.NewRequest(
 		http.MethodGet,
-		"/api/v1/invoices?start_date=2024-01-01&end_date=2024-01-31",
+		"/api/invoices?start_date=2024-01-01&end_date=2024-01-31",
 		nil,
 	)
 	req.Header.Set("Authorization", "Bearer "+accessToken)

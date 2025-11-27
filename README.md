@@ -127,6 +127,7 @@ make build
 |----------|----------------|------|------|
 | POST | `/api/invoices` | 請求書作成 | 必須 |
 | GET | `/api/invoices` | 請求書一覧取得 | 必須 |
+| GET | `/api/invoices/:id` | 請求書詳細取得 | 必須 |
 
 #### GET /api/invoices クエリパラメータ
 
@@ -143,10 +144,10 @@ make build
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
+    "company_id": 1,
     "email": "user@example.com",
     "password": "password123",
-    "name": "山田太郎",
-    "company_name": "株式会社ABC"
+    "name": "山田太郎"
   }'
 ```
 
@@ -180,6 +181,13 @@ curl -X POST http://localhost:8080/api/invoices \
 
 ```bash
 curl "http://localhost:8080/api/invoices?start_date=2024-01-01&end_date=2024-12-31" \
+  -H "Authorization: Bearer <token>"
+```
+
+### 請求書詳細取得
+
+```bash
+curl "http://localhost:8080/api/invoices/1" \
   -H "Authorization: Bearer <token>"
 ```
 

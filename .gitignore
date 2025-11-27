@@ -32,9 +32,6 @@ Thumbs.db
 # sqlc generated files
 internal/infrastructure/database/sqlc/
 
-# swag generated files
-docs/swagger/
-
 # Environment files (if accidentally created)
 .env
 .env.*

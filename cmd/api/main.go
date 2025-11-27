@@ -1,3 +1,14 @@
+// Package main provides the entry point for the API server.
+//
+//	@title						スーパー支払い君.com API
+//	@version					1.0
+//	@description				請求書管理・支払い処理を行うREST APIサービス
+//	@host						localhost:8080
+//	@BasePath					/api
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Bearer token authentication
 package main
 
 import (

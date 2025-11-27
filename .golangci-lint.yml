@@ -1,0 +1,65 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - cyclop
+    - dupl
+    - err113
+    - forbidigo
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gosec
+    - ireturn
+    - maintidx
+    - misspell
+    - mnd
+    - prealloc
+    - tagalign
+    - testifylint
+    - thelper
+    - tparallel
+    - unparam
+    - wsl_v5
+  settings:
+    forbidigo:
+      forbid:
+        - pattern: ^(fmt.Print(|f|ln)|print|println)$
+        - pattern: os.Getenv
+        - pattern: os.LookupEnv
+        - pattern: time.Now
+        - pattern: time.Sleep
+        - pattern: uuid.New
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters:
+          - cyclop
+          - dupl
+          - err113
+          - forbidigo
+          - funlen
+          - gocognit
+          - goconst
+          - maintidx
+      - path: ctxutil/
+        linters:
+          - forbidigo
+          - ireturn
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - goimports
+    - golines
+    - swaggo

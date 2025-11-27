@@ -1,11 +1,13 @@
 package security
 
 import (
+	"context"
 	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/harusys/super-shiharai-kun/internal/infrastructure"
+	"github.com/harusys/super-shiharai-kun/pkg/ctxutil"
 )
 
 // ErrInvalidToken is returned when the token is invalid.
@@ -37,23 +39,34 @@ func NewJWTService(secretKey string) *JWTService {
 	}
 }
 
-// GenerateAccessToken generates an access token.
-func (s *JWTService) GenerateAccessToken(userID, companyID int64) (string, error) {
-	return s.generateToken(userID, companyID, s.accessExpiry)
+// GenerateAccessToken generates an access token and returns the token with its expiration time.
+func (s *JWTService) GenerateAccessToken(
+	ctx context.Context,
+	userID, companyID int64,
+) (string, time.Time, error) {
+	return s.generateToken(ctx, userID, companyID, s.accessExpiry)
 }
 
-// GenerateRefreshToken generates a refresh token.
-func (s *JWTService) GenerateRefreshToken(userID, companyID int64) (string, error) {
-	return s.generateToken(userID, companyID, s.refreshExpiry)
+// GenerateRefreshToken generates a refresh token and returns the token with its expiration time.
+func (s *JWTService) GenerateRefreshToken(
+	ctx context.Context,
+	userID, companyID int64,
+) (string, time.Time, error) {
+	return s.generateToken(ctx, userID, companyID, s.refreshExpiry)
 }
 
-func (s *JWTService) generateToken(userID, companyID int64, expiry time.Duration) (string, error) {
-	now := time.Now()
+func (s *JWTService) generateToken(
+	ctx context.Context,
+	userID, companyID int64,
+	expiry time.Duration,
+) (string, time.Time, error) {
+	now := ctxutil.Now(ctx)
+	expiresAt := now.Add(expiry)
 	claims := &Claims{
 		UserID:    userID,
 		CompanyID: companyID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(expiry)),
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 		},
@@ -61,7 +74,12 @@ func (s *JWTService) generateToken(userID, companyID int64, expiry time.Duration
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(s.secretKey)
+	tokenString, err := token.SignedString(s.secretKey)
+	if err != nil {
+		return "", time.Time{}, err
+	}
+
+	return tokenString, expiresAt, nil
 }
 
 // ValidateToken validates a token and returns claims.

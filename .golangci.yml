@@ -62,6 +62,9 @@ linters:
       - path: internal/infrastructure/security/
         linters:
           - forbidigo
+      - path: internal/usecase/
+        linters:
+          - ireturn
 formatters:
   enable:
     - gci
